@@ -17,6 +17,8 @@ const std::string FenUtility::TEST6_FEN = "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b
 
 void FenUtility::set(Position &pos, const std::string &fen)
 {
+    pos.clear();
+
     size_t spaceChar = 0;
     size_t nextSpaceChar = fen.find(' ' , spaceChar);
     std::string pieces = fen.substr(spaceChar, nextSpaceChar - spaceChar);

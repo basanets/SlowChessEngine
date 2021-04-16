@@ -35,6 +35,8 @@ public:
 
 
         Bitboard movedPieces;
+        Bitboard checkers;
+        Bitboard pinned;
         Piece lastCaptured;
         Square enPassantSquare;
         int plyFiftyMoveRule;
@@ -59,6 +61,7 @@ public:
     ~Position() = default;
 
 public:
+    void clear();
     void set(const std::string & fen);
     std::string fen() const;
 
@@ -73,6 +76,7 @@ public:
     Bitboard getPieces(Color color) const;
     Bitboard getDiagonalSliders(Color color) const;
     Bitboard getOrthogonalSliders(Color color) const;
+    void recalculateCheckersAndPinned();
     Bitboard getCheckers() const;
     Bitboard getPinnedPieces() const;
 

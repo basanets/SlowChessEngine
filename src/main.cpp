@@ -109,16 +109,20 @@ int main()
     Zobrist::initializeTable();
     BB::initializeAll();
 
-    Position position("rnbqkb1r/pp1p1ppp/2p5/4P3/2B5/8/PPP1NnPP/RNBQK2R w KQkq - 0 6");
-    std::cout << position << std::endl;
+    Position position;
 
-    runTest(position, 1);
-    runTest(position, 2);
-    runTest(position, 3);
-    runTest(position, 4);
-    runTest(position, 5);
+    position.set(FenUtility::DEFAULT_FEN);
     runTest(position, 6);
+    position.set(FenUtility::KIWIPETE_FEN);
+    runTest(position, 5);
+    position.set(FenUtility::TEST3_FEN);
     runTest(position, 7);
+    position.set(FenUtility::TEST4_FEN);
+    runTest(position, 6);
+    position.set(FenUtility::TEST5_FEN);
+    runTest(position, 5);
+    position.set(FenUtility::TEST6_FEN);
+    runTest(position, 5);
 
     return 0;
 }

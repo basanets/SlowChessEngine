@@ -9,19 +9,25 @@
 
 Position::Position(const std::string &fen)
 {
+    clear();
+    set(fen);
+}
+
+void Position::clear()
+{
     std::fill(mailbox, mailbox + NUMBER_OF_SQUARES, NULL_PIECE);
     std::fill(pieceBB, pieceBB + NUMBER_OF_PIECES, Bitboard());
     std::fill(history, history + 256, UnrecoverableState());
     hash = 0;
     gamePly = 0;
     sideToPlay = WHITE;
-
-    set(fen);
 }
 
 void Position::set(const std::string &fen)
 {
     FenUtility::set(*this, fen);
+
+    recalculateCheckersAndPinned();
 }
 
 std::string Position::fen() const
@@ -192,6 +198,8 @@ void Position::makeMove(Move move)
             putPiece(makePiece(us, QUEEN), to);
             break;
     }
+
+    recalculateCheckersAndPinned();
 }
 
 void Position::undoMove(Move move)
@@ -287,10 +295,10 @@ Bitboard Position::getOrthogonalSliders(Color color) const
 {
     // need to make template and constexpr
     return pieceBB[makePiece(color, ROOK)]
-         | pieceBB[makePiece(color, QUEEN)];
+            | pieceBB[makePiece(color, QUEEN)];
 }
 
-Bitboard Position::getCheckers() const
+void Position::recalculateCheckersAndPinned()
 {
     const Color us = sideToPlay;
     const Color them = ~us;
@@ -299,7 +307,9 @@ Bitboard Position::getCheckers() const
 
     const Square ourKing = pieceBB[makePiece(us, KING)].lsb();
 
+    Bitboard pinned = 0;
     Bitboard checkers = 0;
+
     checkers |= Bitboard::knightAttacks(ourKing) & pieceBB[makePiece(them, KNIGHT)];
     checkers |= Bitboard::pawnAttacksTo(us, ourKing) & pieceBB[makePiece(them, PAWN)];
 
@@ -315,33 +325,22 @@ Bitboard Position::getCheckers() const
         {
             checkers |= Bitboard::square(slider);
         }
-    }
-
-    return checkers;
-}
-
-Bitboard Position::getPinnedPieces() const
-{
-    const Color us = sideToPlay;
-    const Color them = ~us;
-    const Bitboard bbUs = getPieces(us);
-    const Bitboard bbThem = getPieces(them);
-    const Square ourKing = pieceBB[makePiece(us, KING)].lsb();
-
-    Bitboard xRaySliders = 0;
-    xRaySliders |= Bitboard::rookAttacks(ourKing, bbThem) & getOrthogonalSliders(them);
-    xRaySliders |= Bitboard::bishopAttacks(ourKing, bbThem) & getDiagonalSliders(them);
-
-    Bitboard pinned = 0;
-    while (xRaySliders)
-    {
-        Square slider = xRaySliders.popLsb();
-        Bitboard ourPiecesBetween = Bitboard::squaresBetween(ourKing, slider) & bbUs;
-        if ((ourPiecesBetween & (ourPiecesBetween - 1)) == 0)
+        else if ((ourPiecesBetween & (ourPiecesBetween - 1)) == 0)
         {
             pinned |= ourPiecesBetween;
         }
     }
 
-    return pinned;
+    history[gamePly].checkers = checkers;
+    history[gamePly].pinned = pinned;
+}
+
+Bitboard Position::getCheckers() const
+{
+    return history[gamePly].checkers;
+}
+
+Bitboard Position::getPinnedPieces() const
+{
+    return history[gamePly].pinned;
 }
