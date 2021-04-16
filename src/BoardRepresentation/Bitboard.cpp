@@ -71,9 +71,9 @@ Bitboard Bitboard::queenAttacks(Square square, Bitboard occupancy)
 Bitboard Bitboard::slidingAttacks(Square square, Bitboard occupancy, Bitboard mask)
 {
     // https://www.chessprogramming.org/Hyperbola_Quintessence
-    Bitboard maskedOccupancy = occupancy & mask;
-    Bitboard firstPart = maskedOccupancy - BB::SQUARES[square] * 2;
-    Bitboard secondPart = (maskedOccupancy.reversed() - BB::SQUARES[square].reversed() * 2).reversed();
+    const Bitboard maskedOccupancy = occupancy & mask;
+    const Bitboard firstPart = maskedOccupancy - BB::SQUARES[square] * 2;
+    const Bitboard secondPart = (maskedOccupancy.reversed() - BB::SQUARES[square].reversed() * 2).reversed();
     return (firstPart ^ secondPart) & mask;
 }
 
@@ -83,7 +83,7 @@ std::ostream &operator<<(std::ostream &os, const Bitboard &bb)
     {
         for (int j = 0; j < 8; ++j)
         {
-            os << (bb.bitboard & (1ull << i + j) ? 1 : 0);
+            os << (bb.bitboard & (1ull << (i + j)) ? 1 : 0);
         }
         os << '\n';
     }
