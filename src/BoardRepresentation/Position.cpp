@@ -39,6 +39,7 @@ void Position::putPiece(Piece piece, Square to)
 {
     hash ^= Zobrist::table[piece][to];
     pieceBB[piece] |= Bitboard::square(to);
+    colorBB[colorOf(piece)] |= Bitboard::square(to);
     mailbox[to] = piece;
 }
 
@@ -46,6 +47,7 @@ void Position::removePiece(Square from)
 {
     hash ^= Zobrist::table[mailbox[from]][from];
     pieceBB[mailbox[from]] &= ~Bitboard::square(from);
+    colorBB[colorOf(mailbox[from])] &= ~Bitboard::square(from);
     mailbox[from] = NULL_PIECE;
 }
 
@@ -273,17 +275,6 @@ void Position::undoMove(Move move)
     --gamePly;
 }
 
-Bitboard Position::getPieces(Color color) const
-{
-    // need to make template and constexpr
-    return pieceBB[makePiece(color, PAWN)]
-         | pieceBB[makePiece(color, KNIGHT)]
-         | pieceBB[makePiece(color, BISHOP)]
-         | pieceBB[makePiece(color, ROOK)]
-         | pieceBB[makePiece(color, QUEEN)]
-         | pieceBB[makePiece(color, KING)];
-}
-
 Bitboard Position::getDiagonalSliders(Color color) const
 {
     // need to make template and constexpr
@@ -302,8 +293,8 @@ void Position::recalculateCheckersAndPinned()
 {
     const Color us = sideToPlay;
     const Color them = ~us;
-    const Bitboard bbUs = getPieces(us);
-    const Bitboard bbThem = getPieces(them);
+    const Bitboard bbUs = colorBB[us];
+    const Bitboard bbThem = colorBB[them];
 
     const Square ourKing = pieceBB[makePiece(us, KING)].lsb();
 

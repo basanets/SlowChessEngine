@@ -45,6 +45,7 @@ public:
 public:
     UnrecoverableState history[256];
     Bitboard pieceBB[NUMBER_OF_PIECES];
+    Bitboard colorBB[NUMBER_OF_COLORS];
 
     Piece mailbox[NUMBER_OF_SQUARES];
 
@@ -73,7 +74,6 @@ public:
     void makeMove(Move move);
     void undoMove(Move move);
 
-    Bitboard getPieces(Color color) const;
     Bitboard getDiagonalSliders(Color color) const;
     Bitboard getOrthogonalSliders(Color color) const;
     void recalculateCheckersAndPinned();

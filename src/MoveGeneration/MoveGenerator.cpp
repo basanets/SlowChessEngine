@@ -12,12 +12,11 @@ void MoveGenerator::generateLegalMoves(MoveList &list, const Position &position)
     const Color us = position.sideToPlay;
     const Color them = ~us;
 
-    const Bitboard bbUs = position.getPieces(us);
-    const Bitboard bbThem = position.getPieces(them);
+    const Bitboard bbUs = position.colorBB[us];
+    const Bitboard bbThem = position.colorBB[them];
     const Bitboard bbAll = bbUs | bbThem;
 
     const Bitboard checkers = position.getCheckers();
-    const Bitboard pinned = position.getPinnedPieces();
 
     Bitboard captureMask = bbThem;
     Bitboard quietMask = ~bbAll;
@@ -45,9 +44,9 @@ void MoveGenerator::generateLegalMoves(MoveList &list, const Position &position)
             quietMask = Bitboard::squaresBetween(ourKing, checker);
         }
     }
-    generateSlidingMoves(list, position, quietMask, captureMask, pinned);
-    generateKnightMoves(list, position, quietMask, captureMask, pinned);
-    generatePawnMoves(list, position, quietMask, captureMask, pinned);
+    generateSlidingMoves(list, position, quietMask, captureMask, position.getPinnedPieces());
+    generateKnightMoves(list, position, quietMask, captureMask, position.getPinnedPieces());
+    generatePawnMoves(list, position, quietMask, captureMask, position.getPinnedPieces());
 }
 
 template<Move::Type type>
@@ -83,8 +82,8 @@ void MoveGenerator::generateKingMoves(MoveList &list, const Position &position)
     const Color us = position.sideToPlay;
     const Color them = ~us;
 
-    const Bitboard bbUs = position.getPieces(us);
-    const Bitboard bbThem = position.getPieces(them);
+    const Bitboard bbUs = position.colorBB[us];
+    const Bitboard bbThem = position.colorBB[them];
     const Bitboard bbAll = bbUs | bbThem;
 
     const Square ourKing = position.pieceBB[makePiece(us, KING)].lsb();
@@ -135,8 +134,8 @@ void MoveGenerator::generatePawnMoves(MoveList &list, const Position &position, 
     const Bitboard relativeRank4 = (us == WHITE ? Bitboard::rank(A4) : Bitboard::rank(A5));
     const Bitboard relativeRank7 = (us == WHITE ? Bitboard::rank(A7) : Bitboard::rank(A2));
 
-    const Bitboard bbUs = position.getPieces(us);
-    const Bitboard bbThem = position.getPieces(them);
+    const Bitboard bbUs = position.colorBB[us];
+    const Bitboard bbThem = position.colorBB[them];
     const Bitboard bbAll = bbUs | bbThem;
 
     const Bitboard ourPawns = position.pieceBB[makePiece(us, PAWN)];
@@ -280,8 +279,8 @@ void MoveGenerator::generateSlidingMoves(MoveList &list, const Position &positio
     const Color us = position.sideToPlay;
     const Color them = ~us;
 
-    const Bitboard bbUs = position.getPieces(us);
-    const Bitboard bbThem = position.getPieces(them);
+    const Bitboard bbUs = position.colorBB[us];
+    const Bitboard bbThem = position.colorBB[them];
     const Bitboard bbAll = bbUs | bbThem;
 
     const Square ourKing = position.pieceBB[makePiece(us, KING)].lsb();

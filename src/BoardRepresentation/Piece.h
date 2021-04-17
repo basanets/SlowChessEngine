@@ -55,4 +55,9 @@ constexpr PieceType typeOf(Piece piece)
     return static_cast<PieceType>(piece & pieceTypeMask);
 }
 
+constexpr Color colorOf(Piece piece)
+{
+    return static_cast<Color>((piece >> 3) & 0b1);
+}
+
 #endif //CHESSENGINE_PIECE_H
