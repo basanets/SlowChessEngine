@@ -22,9 +22,13 @@ endif ()
 include_directories(${GTestIncludes})
 
 add_executable(ChessEngineTest
-    main.cpp
-    tst_perft.h
-    tst_PerftStartingPosition.h
+               main.cpp
+               Perft/tst_PerftStartingPosition.h
+               Perft/tst_PerftKiwipete.h
+               Perft/tst_PerftPosition3.h
+               Perft/tst_PerftPosition4.h
+               Perft/tst_PerftPosition5.h
+               Perft/tst_PerftPosition6.h
                ${GTestFiles})
 add_test(NAME perft COMMAND perft)
 
