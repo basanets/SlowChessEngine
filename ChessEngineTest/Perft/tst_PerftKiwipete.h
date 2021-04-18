@@ -28,7 +28,7 @@ INSTANTIATE_TEST_SUITE_P(Kiwipete,
                            , std::make_pair<uint32_t, uint64_t>(3, 97862ull)
                            , std::make_pair<uint32_t, uint64_t>(4, 4085603ull)
                            , std::make_pair<uint32_t, uint64_t>(5, 193690690ull)
-                           , std::make_pair<uint32_t, uint64_t>(6, 8031647685ull)
+//                           , std::make_pair<uint32_t, uint64_t>(6, 8031647685ull)
                              ));
 
 TEST_P(PerftKiwipete, AtDepth)

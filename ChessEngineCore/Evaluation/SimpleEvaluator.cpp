@@ -1,6 +1,6 @@
 #include "SimpleEvaluator.h"
 
-SimpleEvaluator::SimpleEvaluator()
+int32_t SimpleEvaluator::evaluate(const Position & position)
 {
 
 }

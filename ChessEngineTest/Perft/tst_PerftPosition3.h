@@ -30,7 +30,7 @@ INSTANTIATE_TEST_SUITE_P(Position3,
                            , std::make_pair<uint32_t, uint64_t>(5, 674624)
                            , std::make_pair<uint32_t, uint64_t>(6, 11030083)
                            , std::make_pair<uint32_t, uint64_t>(7, 178633661)
-                           , std::make_pair<uint32_t, uint64_t>(8, 3009794393)
+//                           , std::make_pair<uint32_t, uint64_t>(8, 3009794393)
                              ));
 
 TEST_P(PerftPosition3, AtDepth)
