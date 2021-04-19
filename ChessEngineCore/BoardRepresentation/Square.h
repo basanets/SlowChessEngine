@@ -48,6 +48,12 @@ constexpr int antiDiagonalOf(Square square)
     return rankOf(square) + fileOf(square);
 }
 
+constexpr Square mirrored(Square square)
+{
+    Square result = static_cast<Square>(square + 8 * (7 - rankOf(square) * 2));
+    return result;
+}
+
 const std::string SQUARE_STRING[NUMBER_OF_SQUARES] =
 {
     "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1",
