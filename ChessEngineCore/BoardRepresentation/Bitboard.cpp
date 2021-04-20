@@ -77,6 +77,26 @@ Bitboard Bitboard::slidingAttacks(Square square, Bitboard occupancy, Bitboard ma
     return (firstPart ^ secondPart) & mask;
 }
 
+uint32_t Bitboard::castleRightsFromMovedPieces(Bitboard movedPieces)
+{
+    // generate 4-bit castleRights for indexing the zobrist table
+    uint32_t mask = 0;
+
+    if (!(movedPieces & Bitboard::queenCastlingMask(WHITE)))
+        mask |= 0b0001;
+
+    if (!(movedPieces & Bitboard::queenCastlingMask(BLACK)))
+        mask |= 0b0010;
+
+    if (!(movedPieces & Bitboard::kingCastlingMask(WHITE)))
+        mask |= 0b0100;
+
+    if (!(movedPieces & Bitboard::kingCastlingMask(BLACK)))
+        mask |= 0b1000;
+
+    return mask;
+}
+
 std::ostream &operator<<(std::ostream &os, const Bitboard &bb)
 {
     for (int i = 56; i >= 0; i -= 8)

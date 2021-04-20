@@ -33,11 +33,11 @@ void FenUtility::set(Position &pos, const std::string &fen)
 
     spaceChar = nextSpaceChar;
     nextSpaceChar = fen.find(' ' , spaceChar + 1);
-    std::string enPassantSquare = fen.substr(spaceChar + 1, nextSpaceChar - spaceChar);
+    std::string enPassantSquare = fen.substr(spaceChar + 1, nextSpaceChar - spaceChar - 1);
 
     spaceChar = nextSpaceChar;
     nextSpaceChar = fen.find(' ' , spaceChar + 1);
-    std::string halfMoveClock = fen.substr(spaceChar + 1, nextSpaceChar - spaceChar);
+    std::string halfMoveClock = fen.substr(spaceChar + 1, nextSpaceChar - spaceChar - 1);
 
     spaceChar = nextSpaceChar;
     std::string fullMoves = fen.substr(spaceChar + 1);

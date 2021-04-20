@@ -53,8 +53,14 @@ int main()
     Zobrist::initializeTable();
     BB::initializeAll();
 
-    Position position;
-    play(position);
+    Position position/*("rnbq1rk1/ppppbppp/5n2/8/4P1P1/6p1/PPPP1B1P/RNBQK1NR w - - 0 7")*/;
+    std::cout << position << std::endl;
+    std::string move;
+    while (std::cin >> move)
+    {
+        position.makeMove(position.moveFromString(move));
+        std::cout << position << std::endl;
+    }
 
     return 0;
 }

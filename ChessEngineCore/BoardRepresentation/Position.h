@@ -75,6 +75,7 @@ public:
     void removePiece(Square from);
 
     void movePieceQuiet(Square from, Square to);
+    void updateNonPieceHashing(int updateGamePly);
 
     void makeMove(Move move);
     void undoMove(Move move);

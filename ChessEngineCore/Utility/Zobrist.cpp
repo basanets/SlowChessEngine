@@ -5,7 +5,15 @@
 #include "Zobrist.h"
 #include <random>
 
-uint64_t Zobrist::table[NUMBER_OF_PIECES][NUMBER_OF_SQUARES];
+uint64_t Zobrist::pieceTable[NUMBER_OF_PIECES][NUMBER_OF_SQUARES];
+// used to hash EP square
+uint64_t Zobrist::fileTable[8];
+
+// to hash castling rights
+uint64_t Zobrist::castlingRightsTable[4];
+
+uint64_t Zobrist::sideToMove;
+
 
 void Zobrist::initializeTable()
 {
@@ -15,7 +23,19 @@ void Zobrist::initializeTable()
     {
         for (int j = 0; j < static_cast<int>(NUMBER_OF_SQUARES); ++j)
         {
-            table[i][j] = distribution(prng);
+            pieceTable[i][j] = distribution(prng);
         }
     }
+
+    for (int i = 0; i < 8; ++i)
+    {
+        fileTable[i] = distribution(prng);
+    }
+
+    for (int i = 0; i < 4; ++i)
+    {
+        castlingRightsTable[i] = distribution(prng);
+    }
+
+    sideToMove = distribution(prng);
 }

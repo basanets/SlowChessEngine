@@ -14,7 +14,16 @@ class Zobrist
 {
 public:
     static void initializeTable();
-    static uint64_t table[NUMBER_OF_PIECES][NUMBER_OF_SQUARES];
+    // used to hash pieces
+    static uint64_t pieceTable[NUMBER_OF_PIECES][NUMBER_OF_SQUARES];
+
+    // used to hash EP square
+    static uint64_t fileTable[8];
+
+    // to hash castling rights
+    static uint64_t castlingRightsTable[4];
+
+    static uint64_t sideToMove;
 };
 
 

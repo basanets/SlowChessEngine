@@ -162,6 +162,7 @@ public:
     static Bitboard queenCastlingBlockers(Color color);
     static Bitboard slidingAttacks(Square square, Bitboard occupancy, Bitboard mask);
 
+    static uint32_t castleRightsFromMovedPieces(Bitboard movedPieces);
     static Bitboard pawnAttacksTo(Color color, Square square);
     static Bitboard pawnAttacks(Color color, Bitboard pawns);
     static Bitboard kingAttacks(Square square);

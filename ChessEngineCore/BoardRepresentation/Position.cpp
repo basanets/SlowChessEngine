@@ -40,6 +40,10 @@ void Position::set(const std::string &fen)
 {
     FenUtility::set(*this, fen);
 
+    if (sideToPlay == BLACK)
+        hash ^= Zobrist::sideToMove;
+
+    updateNonPieceHashing(gamePly);
     recalculateCheckersAndPinned();
 }
 
@@ -74,7 +78,8 @@ Move Position::moveFromString(const std::string & move)
         else
         {
             // capture
-            if      (promotionPiece == "")   type = Move::Type::CAPTURE;
+            if   (mailbox[to] == NULL_PIECE) type = Move::Type::EN_PASSANT;
+            else if (promotionPiece == "")   type = Move::Type::CAPTURE;
             else if (promotionPiece == "n")  type = Move::Type::PROMOTION_CAPTURE_KNIGHT;
             else if (promotionPiece == "b")  type = Move::Type::PROMOTION_CAPTURE_BISHOP;
             else if (promotionPiece == "r")  type = Move::Type::PROMOTION_CAPTURE_ROOK;
@@ -119,17 +124,21 @@ Move Position::moveFromString(const std::string & move)
 
 void Position::putPiece(Piece piece, Square to)
 {
-    hash ^= Zobrist::table[piece][to];
+    hash ^= Zobrist::pieceTable[piece][to];
     pieceBB[piece] |= Bitboard::square(to);
     colorBB[colorOf(piece)] |= Bitboard::square(to);
+
     mailbox[to] = piece;
 }
 
 void Position::removePiece(Square from)
 {
-    hash ^= Zobrist::table[mailbox[from]][from];
-    pieceBB[mailbox[from]] &= ~Bitboard::square(from);
-    colorBB[colorOf(mailbox[from])] &= ~Bitboard::square(from);
+    const Piece piece = mailbox[from];
+
+    hash ^= Zobrist::pieceTable[piece][from];
+    pieceBB[piece] &= ~Bitboard::square(from);
+    colorBB[colorOf(piece)] &= ~Bitboard::square(from);
+
     mailbox[from] = NULL_PIECE;
 }
 
@@ -137,6 +146,15 @@ void Position::movePieceQuiet(Square from, Square to)
 {
     putPiece(mailbox[from], to);
     removePiece(from);
+}
+
+// parameter for make-unmake
+void Position::updateNonPieceHashing(int updateGamePly)
+{
+    hash ^= Zobrist::castlingRightsTable[Bitboard::castleRightsFromMovedPieces(history[updateGamePly].movedPieces)];
+
+    if (history[updateGamePly].enPassantSquare != NULL_SQUARE)
+        hash ^= Zobrist::fileTable[fileOf(history[updateGamePly].enPassantSquare)];
 }
 
 std::ostream &operator<<(std::ostream &os, const Position &pos)
@@ -283,6 +301,10 @@ void Position::makeMove(Move move)
             break;
     }
 
+    hash ^= Zobrist::sideToMove;
+    updateNonPieceHashing(gamePly);
+    // still positive cause we made a move
+    updateNonPieceHashing(gamePly - 1);
     recalculateCheckersAndPinned();
 }
 
@@ -352,6 +374,11 @@ void Position::undoMove(Move move)
             putPiece(history[gamePly].lastCaptured, to);
             break;
     }
+
+    hash ^= Zobrist::sideToMove;
+    updateNonPieceHashing(gamePly);
+    // still positive cause couldn't have made an undo otherwise
+    updateNonPieceHashing(gamePly - 1);
 
     sideToPlay = ~sideToPlay;
     --gamePly;
