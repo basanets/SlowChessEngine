@@ -13,12 +13,12 @@ class MoveList
 public:
     explicit MoveList (const Position & position);
 
-    const Move * begin() const
+    Move * begin()
     {
         return moveList;
     }
 
-    const Move * end() const
+    Move * end()
     {
         return last;
     }

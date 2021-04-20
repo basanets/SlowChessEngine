@@ -51,7 +51,6 @@ public:
     constexpr ~Move() = default;
 
 public:
-
     constexpr Square to() const
     {
         return static_cast<Square>(move & 0b111111);
@@ -60,6 +59,11 @@ public:
     constexpr Square from() const
     {
         return static_cast<Square>((move >> 6) & 0b111111);
+    }
+
+    constexpr bool isValid() const
+    {
+        return to() != NULL_SQUARE && from() != NULL_SQUARE;
     }
 
     constexpr Type type() const
@@ -108,6 +112,16 @@ public:
                 || type == PROMOTION_QUEEN
                 || type == CASTLE_00
                 || type == CASTLE_000;
+    }
+
+    constexpr bool operator == (const Move & move) const
+    {
+        return this->move == move.move;
+    }
+
+    constexpr bool operator != (const Move & move) const
+    {
+        return !(*this == move);
     }
 
     std::string toString() const;

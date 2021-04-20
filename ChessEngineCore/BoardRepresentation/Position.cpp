@@ -7,6 +7,7 @@
 #include "../Utility/FenUtility.h"
 #include <ostream>
 #include "../Evaluation/SimpleEvaluator.h"
+#include <MoveGeneration/MoveList.h>
 
 Position::Position(const std::string &fen)
 {
@@ -34,6 +35,27 @@ void Position::clear()
     hash = 0;
     gamePly = 0;
     sideToPlay = WHITE;
+}
+
+Position::Status Position::status() const
+{
+    MoveList list(*this);
+    if (list.size() == 0)
+    {
+        if (getCheckers() == 0)
+            return STALEMATE;
+        else
+        {
+            if (sideToPlay == WHITE) return BLACK_WIN;
+            else                     return WHITE_WIN;
+        }
+    }
+
+    // add threefold repetition by hash
+    if (history[gamePly].plyFiftyMoveRule >= 50)
+        return DRAW;
+
+    return NOT_FINISHED;
 }
 
 void Position::set(const std::string &fen)

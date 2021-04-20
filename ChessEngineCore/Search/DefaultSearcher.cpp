@@ -10,19 +10,38 @@ static constexpr int32_t positiveInfinity = 100000;
 static constexpr int32_t negativeInfinity = -positiveInfinity;
 static constexpr int32_t checkmateScore = 10000;
 
+std::tuple<Move, int32_t> DefaultSearcher::iterativeDeepeningSearch(const Position & position, uint32_t maxDepth)
+{
+    timeTaken = 0;
+    nodesReached = 0;
+    nodesEvaluated = 0;
+    nodesCutOff = 0;
+
+    auto start = std::chrono::high_resolution_clock::now();
+
+    std::tuple<Move, int32_t> result;
+    for (uint32_t depth = 1; depth <= maxDepth; ++depth)
+    {
+        result = findBestMove(position, depth);
+        std::tie(knownBestMove, std::ignore) = result;
+    }
+
+    auto finish = std::chrono::high_resolution_clock::now();
+    timeTaken = std::chrono::duration_cast<std::chrono::microseconds>(finish - start).count();
+
+    return result;
+}
+
 std::tuple<Move, int32_t> DefaultSearcher::findBestMove(const Position & position, uint32_t depth)
 {
     if (depth == 0)
         throw std::runtime_error("Cannot find any moves at depth 0");
 
-    auto start = std::chrono::high_resolution_clock::now();
-
-
     std::tuple<Move, int32_t> bestMove = {Move(NULL_SQUARE, NULL_SQUARE), negativeInfinity};
 
     Position copiedPosition = position;
     MoveList moveList(copiedPosition);
-    moveList.orderMoves(position);
+    orderMoves(moveList, position, knownBestMove);
 
     int32_t alpha = negativeInfinity;
     for (Move move: moveList)
@@ -38,9 +57,6 @@ std::tuple<Move, int32_t> DefaultSearcher::findBestMove(const Position & positio
             bestMove = {move, evaluation};
         }
     }
-
-    auto finish = std::chrono::high_resolution_clock::now();
-    timeTaken = std::chrono::duration_cast<std::chrono::microseconds>(finish - start).count();
 
     return bestMove;
 }
@@ -83,7 +99,6 @@ int32_t DefaultSearcher::search(Position & position, uint32_t depth, uint32_t pl
         // move is TOO good
         if (evaluation >= beta)
         {
-            // cut off
             ++nodesCutOff;
             return beta;
         }
@@ -150,4 +165,19 @@ int32_t DefaultSearcher::quiescenceSearch(Position & position, uint32_t plyFromR
     }
 
     return alpha;
+}
+
+void DefaultSearcher::orderMoves(MoveList & moveList, const Position & pos, Move bestMove)
+{
+    moveList.orderMoves(pos);
+
+    // set the move we know is best to this move
+    if (bestMove.isValid())
+    {
+        Move * move = std::find(moveList.begin(), moveList.end(), bestMove);
+        if (move != moveList.end())
+        {
+            std::iter_swap(moveList.begin(), move);
+        }
+    }
 }

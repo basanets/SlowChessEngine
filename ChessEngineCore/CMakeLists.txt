@@ -31,7 +31,9 @@ add_library(ChessEngineCore
     Evaluation/SimpleEvaluator.cpp
     Evaluation/SimpleEvaluator.h
     Search/DefaultSearcher.cpp
-    Search/DefaultSearcher.h)
+    Search/DefaultSearcher.h
+    Search/TranspositionTable.cpp
+    Search/TranspositionTable.h)
 
 target_compile_definitions(ChessEngineCore PRIVATE CHESSENGINECORE_LIBRARY)
 

@@ -26,7 +26,7 @@ void play(Position & pos)
         else
         {
             DefaultSearcher searcher;
-            const auto & [bestMove, eval] = searcher.findBestMove(pos, 6);
+            const auto & [bestMove, eval] = searcher.iterativeDeepeningSearch(pos, 8);
             std::cout << "Time taken: " << searcher.timeTaken / 1000000.0 << std::endl;
             std::cout << "Nodes reached: " << searcher.nodesReached << std::endl;
             std::cout << "Nodes evaluated: " << searcher.nodesEvaluated << std::endl;
@@ -53,14 +53,8 @@ int main()
     Zobrist::initializeTable();
     BB::initializeAll();
 
-    Position position/*("rnbq1rk1/ppppbppp/5n2/8/4P1P1/6p1/PPPP1B1P/RNBQK1NR w - - 0 7")*/;
-    std::cout << position << std::endl;
-    std::string move;
-    while (std::cin >> move)
-    {
-        position.makeMove(position.moveFromString(move));
-        std::cout << position << std::endl;
-    }
+    Position position;
+    play(position);
 
     return 0;
 }

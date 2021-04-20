@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by mikhail on 10.04.21.
 //
 
@@ -17,6 +17,15 @@
 class Position
 {
 public:
+    enum Status
+    {
+        WHITE_WIN,
+        BLACK_WIN,
+        DRAW,
+        STALEMATE,
+        NOT_FINISHED
+    };
+
     struct UnrecoverableState
     {
         constexpr UnrecoverableState()
@@ -52,7 +61,6 @@ public:
     Bitboard colorBB[NUMBER_OF_COLORS];
 
     Piece mailbox[NUMBER_OF_SQUARES];
-
     uint64_t hash;
     uint32_t gamePly;
     Color sideToPlay;
@@ -67,6 +75,7 @@ public:
 
 public:
     void clear();
+    Status status() const;
     void set(const std::string & fen);
     std::string fen() const;
     Move moveFromString(const std::string & move);
