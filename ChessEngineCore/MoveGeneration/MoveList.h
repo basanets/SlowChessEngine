@@ -11,7 +11,7 @@ class Position;
 class MoveList
 {
 public:
-    explicit MoveList (Position & position);
+    explicit MoveList (const Position & position);
 
     const Move * begin() const
     {
@@ -32,6 +32,8 @@ public:
     {
         *last++ = move;
     }
+
+    void orderMoves(const Position & position);
 
 private:
     static constexpr uint32_t MAX_MOVES = 256; // from stockfish

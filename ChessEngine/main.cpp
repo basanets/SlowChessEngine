@@ -1,5 +1,6 @@
 #include <iostream>
 #include <chrono>
+#include <Search/DefaultSearcher.h>
 #include "BoardRepresentation/Position.h"
 #include "Utility/FenUtility.h"
 #include "Utility/Zobrist.h"
@@ -7,12 +8,44 @@
 #include "MoveGeneration/MoveList.h"
 #include "Search/PerfomanceTester.h"
 
-void runTest(Position & pos, uint32_t depth)
+void play(Position & pos)
 {
-    auto start = std::chrono::steady_clock::now();
-    std::cout << PerfomanceTester::perft(pos, depth) << std::endl;
-    auto finish = std::chrono::steady_clock::now();
-    std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count() / 1000.0 << "\n\n\n" << std::endl;
+    Color human = WHITE;
+    Color agent = BLACK;
+
+    std::cout << pos << std::endl;
+
+    while (true)
+    {
+        if (pos.sideToPlay == human)
+        {
+            std::string move;
+            std::cin >> move;
+            pos.makeMove(pos.moveFromString(move));
+        }
+        else
+        {
+            DefaultSearcher searcher;
+            const auto & [bestMove, eval] = searcher.findBestMove(pos, 6);
+            std::cout << "Time taken: " << searcher.timeTaken / 1000000.0 << std::endl;
+            std::cout << "Nodes reached: " << searcher.nodesReached << std::endl;
+            std::cout << "Nodes evaluated: " << searcher.nodesEvaluated << std::endl;
+            std::cout << "Nodes cutoff: " << searcher.nodesCutOff << std::endl;
+
+            if (bestMove.from() != NULL_SQUARE && !(pos.history[pos.gamePly].plyFiftyMoveRule == 50))
+            {
+                std::cout << bestMove.toString() << ": " << eval << std::endl;
+                pos.makeMove(bestMove);
+            }
+            else
+            {
+                std::cout << "game ended" << std::endl;
+                break;
+            }
+        }
+
+        std::cout << pos << std::endl;
+    }
 }
 
 int main()
@@ -21,13 +54,7 @@ int main()
     BB::initializeAll();
 
     Position position;
-    runTest(position, 0);
-    runTest(position, 1);
-//    runTest(position, 2);
-//    runTest(position, 3);
-//    runTest(position, 4);
-//    runTest(position, 5);
-//    runTest(position, 6);
+    play(position);
 
     return 0;
 }

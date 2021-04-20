@@ -15,20 +15,12 @@ static constexpr std::array<int32_t, NUMBER_OF_PIECE_TYPES> PIECE_VALUES =
     0, // king is unvaluable
 };
 
-// location bonuses for pieces
+// location bonuses for pieces BLACK (need to mirror for white)
 static constexpr std::array<std::array<int32_t, NUMBER_OF_SQUARES>, NUMBER_OF_PIECE_TYPES> SQUARE_VALUES =
 {
     {
         // null piece
         {
-            0,  0,  0,  0,  0,  0,  0,  0,
-            50, 50, 50, 50, 50, 50, 50, 50,
-            10, 10, 20, 30, 30, 20, 10, 10,
-             5,  5, 10, 25, 25, 10,  5,  5,
-             0,  0,  0, 20, 20,  0,  0,  0,
-             5, -5,-10,  0,  0,-10, -5,  5,
-             5, 10, 10,-20,-20, 10, 10,  5,
-             0,  0,  0,  0,  0,  0,  0,  0,
         },
 
         // pawns
@@ -39,7 +31,7 @@ static constexpr std::array<std::array<int32_t, NUMBER_OF_SQUARES>, NUMBER_OF_PI
             5,  5, 10, 25, 25, 10,  5,  5,
             0,  0,  0, 20, 20,  0,  0,  0,
             5, -5,-10,  0,  0,-10, -5,  5,
-            5, 10, 10,-20,-20, 10, 10,  5,
+            5, 10, 10,-40,-40, 10, 10,  5,
             0,  0,  0,  0,  0,  0,  0,  0,
         },
 
@@ -47,10 +39,10 @@ static constexpr std::array<std::array<int32_t, NUMBER_OF_SQUARES>, NUMBER_OF_PI
         {
             -50,-40,-30,-30,-30,-30,-40,-50,
             -40,-20,  0,  0,  0,  0,-20,-40,
-            -30,  0, 10, 15, 15, 10,  0,-30,
+            -30,  0,  7, 15, 15,  7,  0,-30,
             -30,  5, 15, 20, 20, 15,  5,-30,
             -30,  0, 15, 20, 20, 15,  0,-30,
-            -30,  5, 10, 15, 15, 10,  5,-30,
+            -30,  5,  7, 15, 15,  7,  5,-30,
             -40,-20,  0,  5,  5,  0,-20,-40,
             -50,-40,-30,-30,-30,-30,-40,-50,
         },
@@ -93,14 +85,22 @@ static constexpr std::array<std::array<int32_t, NUMBER_OF_SQUARES>, NUMBER_OF_PI
 
         // king
         {
-            -30,-40,-40,-50,-50,-40,-40,-30,
-            -30,-40,-40,-50,-50,-40,-40,-30,
-            -30,-40,-40,-50,-50,-40,-40,-30,
-            -30,-40,-40,-50,-50,-40,-40,-30,
-            -20,-30,-30,-40,-40,-30,-30,-20,
-            -10,-20,-20,-20,-20,-20,-20,-10,
-             20, 20,  0,  0,  0,  0, 20, 20,
-             20, 30, 10,  0,  0, 10, 30, 20,
+//            -30,-40,-40,-50,-50,-40,-40,-30,
+//            -30,-40,-40,-50,-50,-40,-40,-30,
+//            -30,-40,-40,-50,-50,-40,-40,-30,
+//            -30,-40,-40,-50,-50,-40,-40,-30,
+//            -20,-30,-30,-40,-40,-30,-30,-20,
+//            -10,-20,-20,-20,-20,-20,-20,-10,
+//             20, 20,  0,  0,  0,  0, 20, 20,
+//             20, 30, 10,  0,  0, 10, 30, 20,
+            0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0,
+            0, 20, 0, -1, -1, 0, 20, 0,
         }
     }
 };
@@ -114,8 +114,8 @@ static constexpr auto generatePieceSquareValues()
     {
         for (Square square = A1; square < NUMBER_OF_SQUARES; ++square)
         {
-            result[WHITE][pieceType][square] = PIECE_VALUES[pieceType] + SQUARE_VALUES[pieceType][square];
-            result[BLACK][pieceType][square] = -(PIECE_VALUES[pieceType] + SQUARE_VALUES[pieceType][mirrored(square)]);
+            result[WHITE][pieceType][square] = PIECE_VALUES[pieceType] + SQUARE_VALUES[pieceType][mirrored(square)];
+            result[BLACK][pieceType][square] = -(PIECE_VALUES[pieceType] + SQUARE_VALUES[pieceType][square]);
         }
     }
 
@@ -140,4 +140,9 @@ int32_t SimpleEvaluator::evaluate(const Position & position)
     }
 
     return evaluation;
+}
+
+int32_t SimpleEvaluator::evaluate(const Position & position, Color side)
+{
+    return (side == WHITE) ? evaluate(position) : -evaluate(position);
 }

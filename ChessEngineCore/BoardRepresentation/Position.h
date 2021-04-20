@@ -20,14 +20,18 @@ public:
     struct UnrecoverableState
     {
         constexpr UnrecoverableState()
-            : movedPieces(0ull),
-            lastCaptured(NULL_PIECE),
-            enPassantSquare(NULL_SQUARE),
-            plyFiftyMoveRule(0)
+            : movedPieces(0ull)
+            , checkers(0)
+            , pinned(0)
+            , lastCaptured(NULL_PIECE)
+            , enPassantSquare(NULL_SQUARE)
+            , plyFiftyMoveRule(0)
         {}
 
         constexpr UnrecoverableState(const UnrecoverableState & other)
             : movedPieces(other.movedPieces)
+            , checkers(0)
+            , pinned(0)
             , lastCaptured(NULL_PIECE)
             , enPassantSquare(NULL_SQUARE)
             , plyFiftyMoveRule(other.plyFiftyMoveRule + 1)
@@ -43,7 +47,7 @@ public:
     };
 
 public:
-    UnrecoverableState history[256];
+    UnrecoverableState history[512];
     Bitboard pieceBB[NUMBER_OF_PIECES];
     Bitboard colorBB[NUMBER_OF_COLORS];
 
@@ -55,7 +59,7 @@ public:
 
 public:
     explicit Position(const std::string & fen = FenUtility::DEFAULT_FEN);
-    Position(const Position & pos) = delete;
+    Position(const Position & pos);
     Position(Position && pos) = delete;
     Position & operator = (const Position & pos) = delete;
     Position & operator = (Position && pos) = delete;
@@ -65,6 +69,7 @@ public:
     void clear();
     void set(const std::string & fen);
     std::string fen() const;
+    Move moveFromString(const std::string & move);
 
     void putPiece(Piece piece, Square to);
     void removePiece(Square from);

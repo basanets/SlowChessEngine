@@ -10,7 +10,11 @@ class Position;
 class SimpleEvaluator
 {
 public:
-   static int32_t evaluate(const Position & position);
+    // color independent eval. negative means good for black, positive - good for white
+    static int32_t evaluate(const Position & position);
+
+    // color dependent eval. Positive means good for side (param)
+    static int32_t evaluate(const Position & position, Color side);
 };
 
 #endif // SIMPLEEVALUATOR_H

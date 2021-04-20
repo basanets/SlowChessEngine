@@ -6,6 +6,7 @@
 #include "../Utility/Zobrist.h"
 #include "../Utility/FenUtility.h"
 #include <ostream>
+#include "../Evaluation/SimpleEvaluator.h"
 
 Position::Position(const std::string &fen)
 {
@@ -13,10 +14,22 @@ Position::Position(const std::string &fen)
     set(fen);
 }
 
+Position::Position(const Position & pos)
+{
+    std::copy(pos.mailbox, pos.mailbox + NUMBER_OF_SQUARES, mailbox);
+    std::copy(pos.pieceBB, pos.pieceBB + NUMBER_OF_PIECES, pieceBB);
+    std::copy(pos.colorBB, pos.colorBB + NUMBER_OF_PIECES, colorBB);
+    std::copy(pos.history, pos.history + 256, history);
+    hash = pos.hash;
+    gamePly = pos.gamePly;
+    sideToPlay = pos.sideToPlay;
+}
+
 void Position::clear()
 {
     std::fill(mailbox, mailbox + NUMBER_OF_SQUARES, NULL_PIECE);
     std::fill(pieceBB, pieceBB + NUMBER_OF_PIECES, Bitboard());
+    std::fill(colorBB, colorBB + NUMBER_OF_PIECES, Bitboard());
     std::fill(history, history + 256, UnrecoverableState());
     hash = 0;
     gamePly = 0;
@@ -33,6 +46,75 @@ void Position::set(const std::string &fen)
 std::string Position::fen() const
 {
     return FenUtility::fen(*this);
+}
+
+Move Position::moveFromString(const std::string & move)
+{
+    std::string fromStr = move.substr(0, 2);
+    std::string toStr = move.substr(2, 2);
+    std::string promotionPiece = "";
+    if (move.size() > 4)
+        promotionPiece = move.substr(4);
+
+    Square from = static_cast<Square>(std::find(SQUARE_STRING, SQUARE_STRING + NUMBER_OF_SQUARES, fromStr) - SQUARE_STRING);
+    Square to = static_cast<Square>(std::find(SQUARE_STRING, SQUARE_STRING + NUMBER_OF_SQUARES, toStr) - SQUARE_STRING);
+    Move::Type type = Move::Type::QUIET;
+
+    switch (typeOf(mailbox[from])) {
+    case PAWN:
+        if (fileOf(from) == fileOf(to))
+        {
+            // non-capture
+            if (std::abs(rankOf(from) - rankOf(to)) == 2) type = Move::Type::DOUBLE_PUSH;
+            else if (promotionPiece == "n")  type = Move::Type::PROMOTION_KNIGHT;
+            else if (promotionPiece == "b")  type = Move::Type::PROMOTION_BISHOP;
+            else if (promotionPiece == "r")  type = Move::Type::PROMOTION_ROOK;
+            else if (promotionPiece == "q")  type = Move::Type::PROMOTION_QUEEN;
+        }
+        else
+        {
+            // capture
+            if      (promotionPiece == "")   type = Move::Type::CAPTURE;
+            else if (promotionPiece == "n")  type = Move::Type::PROMOTION_CAPTURE_KNIGHT;
+            else if (promotionPiece == "b")  type = Move::Type::PROMOTION_CAPTURE_BISHOP;
+            else if (promotionPiece == "r")  type = Move::Type::PROMOTION_CAPTURE_ROOK;
+            else if (promotionPiece == "q")  type = Move::Type::PROMOTION_CAPTURE_QUEEN;
+        }
+        break;
+
+    case KING:
+        if (fileOf(from) == fileOf(E1) && fileOf(to) == fileOf(G1))
+        {
+            type = Move::Type::CASTLE_00;
+        }
+        else if (fileOf(from) == fileOf(E1) && fileOf(to) == fileOf(C1))
+        {
+            type = Move::Type::CASTLE_000;
+        }
+        else if (mailbox[to] != NULL_PIECE)
+        {
+            type = Move::Type::CAPTURE;
+        }
+        break;
+
+    case KNIGHT:
+    case BISHOP:
+    case ROOK:
+    case QUEEN:
+        if (mailbox[to] != NULL_PIECE)
+        {
+            type = Move::Type::CAPTURE;
+        }
+
+        break;
+
+        // to avoid warnings
+    case NULL_PIECE_TYPE:
+    case NUMBER_OF_PIECE_TYPES:
+        break;
+    }
+
+    return Move(from, to, type);
 }
 
 void Position::putPiece(Piece piece, Square to)

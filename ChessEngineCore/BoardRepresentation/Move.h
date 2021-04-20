@@ -67,6 +67,49 @@ public:
         return static_cast<Type>(move >> 12);
     }
 
+    constexpr bool isPromotion() const
+    {
+        Type type = this->type();
+        return     type == PROMOTION_KNIGHT
+                || type == PROMOTION_BISHOP
+                || type == PROMOTION_ROOK
+                || type == PROMOTION_QUEEN
+                || type == PROMOTION_CAPTURE_KNIGHT
+                || type == PROMOTION_CAPTURE_BISHOP
+                || type == PROMOTION_CAPTURE_ROOK
+                || type == PROMOTION_CAPTURE_QUEEN;
+    }
+
+    constexpr bool isCapture() const
+    {
+        Type type = this->type();
+        return     type == CAPTURE
+                || type == EN_PASSANT
+                || type == PROMOTION_CAPTURE_KNIGHT
+                || type == PROMOTION_CAPTURE_BISHOP
+                || type == PROMOTION_CAPTURE_ROOK
+                || type == PROMOTION_CAPTURE_QUEEN;
+    }
+
+    constexpr bool isCastle() const
+    {
+        Type type = this->type();
+        return type == CASTLE_00 || type == CASTLE_000;
+    }
+
+    constexpr bool isQuiet() const
+    {
+        Type type = this->type();
+        return     type == QUIET
+                || type == DOUBLE_PUSH
+                || type == PROMOTION_KNIGHT
+                || type == PROMOTION_BISHOP
+                || type == PROMOTION_ROOK
+                || type == PROMOTION_QUEEN
+                || type == CASTLE_00
+                || type == CASTLE_000;
+    }
+
     std::string toString() const;
 };
 
