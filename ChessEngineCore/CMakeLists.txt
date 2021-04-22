@@ -5,6 +5,9 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+option(USE_NN_EVALUATION "Compile the neural network evaluation functionality" OFF)
+configure_file(CoreConfig.h.in CoreConfig.h)
+
 add_library(ChessEngineCore
     BoardRepresentation/Bitboard.cpp
     BoardRepresentation/Bitboard.h
@@ -37,7 +40,13 @@ add_library(ChessEngineCore
     Evaluation/NeuralNetworkEvaluator.cpp
     Evaluation/NeuralNetworkEvaluator.h)
 
-find_library(TENSORFLOW_LIB tensorflow HINT $ENV{HOME}/libtensorflow2/lib)
-target_link_libraries (ChessEngineCore "${TENSORFLOW_LIB}")
-target_compile_definitions(ChessEngineCore PRIVATE CHESSENGINECORE_LIBRARY)
+if (USE_NN_EVALUATION)
+    find_library(TENSORFLOW_LIB tensorflow HINT $ENV{HOME}/libtensorflow2/lib)
+    target_link_libraries (ChessEngineCore "${TENSORFLOW_LIB}")
+endif()
 
+target_compile_definitions(ChessEngineCore PRIVATE CHESSENGINECORE_LIBRARY)
+target_include_directories(ChessEngineCore PUBLIC
+                           "${PROJECT_BINARY_DIR}"
+                           ${EXTRA_INCLUDES}
+                           )

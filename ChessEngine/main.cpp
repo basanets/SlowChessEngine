@@ -1,7 +1,6 @@
 #include <iostream>
 #include <chrono>
 #include <Search/DefaultSearcher.h>
-#include <Evaluation/NeuralNetworkEvaluator.h>
 #include "BoardRepresentation/Position.h"
 #include "Utility/FenUtility.h"
 #include "Utility/Zobrist.h"
@@ -16,10 +15,15 @@ void play(Position & pos)
     std::cout << pos << std::endl;
 
     const std::string modelFilePath = "/home/mikhail/university/SlowChessEngine/nn/evaluate_position";
-    NeuralNetworkEvaluator evaluator(modelFilePath);
 
     while (true)
     {
+        if (pos.status() != Position::NOT_FINISHED)
+        {
+            std::cout << "game ended" << std::endl;
+            break;
+        }
+
         if (pos.sideToPlay == human)
         {
             std::string move;
@@ -28,23 +32,15 @@ void play(Position & pos)
         }
         else
         {
-            DefaultSearcher searcher(&evaluator);
+            DefaultSearcher searcher;
             const auto & [bestMove, eval] = searcher.iterativeDeepeningSearch(pos, 2);
             std::cout << "Time taken: " << searcher.timeTaken / 1000000.0 << std::endl;
             std::cout << "Nodes reached: " << searcher.nodesReached << std::endl;
             std::cout << "Nodes evaluated: " << searcher.nodesEvaluated << std::endl;
             std::cout << "Nodes cutoff: " << searcher.nodesCutOff << std::endl;
 
-            if (bestMove.from() != NULL_SQUARE && !(pos.history[pos.gamePly].plyFiftyMoveRule == 50))
-            {
-                std::cout << bestMove.toString() << ": " << eval << std::endl;
-                pos.makeMove(bestMove);
-            }
-            else
-            {
-                std::cout << "game ended" << std::endl;
-                break;
-            }
+            std::cout << bestMove.toString() << ": " << eval << std::endl;
+            pos.makeMove(bestMove);
         }
 
         std::cout << pos << std::endl;
