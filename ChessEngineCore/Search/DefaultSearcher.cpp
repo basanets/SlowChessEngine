@@ -2,6 +2,7 @@
 
 #include <MoveGeneration/MoveList.h>
 #include <BoardRepresentation/Position.h>
+#include <Evaluation/NeuralNetworkEvaluator.h>
 #include <Evaluation/SimpleEvaluator.h>
 #include <chrono>
 #include <stdexcept>
@@ -10,13 +11,14 @@ static constexpr int32_t positiveInfinity = 100000;
 static constexpr int32_t negativeInfinity = -positiveInfinity;
 static constexpr int32_t checkmateScore = 10000;
 
+DefaultSearcher::DefaultSearcher(NeuralNetworkEvaluator * nnEvaluator)
+    : nnEvaluator(nnEvaluator)
+{
+
+}
+
 std::tuple<Move, int32_t> DefaultSearcher::iterativeDeepeningSearch(const Position & position, uint32_t maxDepth)
 {
-    timeTaken = 0;
-    nodesReached = 0;
-    nodesEvaluated = 0;
-    nodesCutOff = 0;
-
     auto start = std::chrono::high_resolution_clock::now();
 
     std::tuple<Move, int32_t> result;
@@ -118,7 +120,7 @@ int32_t DefaultSearcher::quiescenceSearch(Position & position, uint32_t plyFromR
     ++nodesEvaluated;
     ++nodesReached;
 
-    int evaluation = SimpleEvaluator::evaluate(position, position.sideToPlay);
+    int evaluation = this->evaluatePosition(position);
     if (evaluation >= beta)
     {
         // cut off
@@ -165,6 +167,18 @@ int32_t DefaultSearcher::quiescenceSearch(Position & position, uint32_t plyFromR
     }
 
     return alpha;
+}
+
+int32_t DefaultSearcher::evaluatePosition(const Position & position)
+{
+    if (nnEvaluator == nullptr)
+    {
+        return SimpleEvaluator::evaluate(position, position.sideToPlay);
+    }
+    else
+    {
+        return nnEvaluator->evaluate(position, position.sideToPlay);
+    }
 }
 
 void DefaultSearcher::orderMoves(MoveList & moveList, const Position & pos, Move bestMove)

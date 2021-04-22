@@ -1,6 +1,7 @@
 #include <iostream>
 #include <chrono>
 #include <Search/DefaultSearcher.h>
+#include <Evaluation/NeuralNetworkEvaluator.h>
 #include "BoardRepresentation/Position.h"
 #include "Utility/FenUtility.h"
 #include "Utility/Zobrist.h"
@@ -11,9 +12,11 @@
 void play(Position & pos)
 {
     Color human = WHITE;
-    Color agent = BLACK;
 
     std::cout << pos << std::endl;
+
+    const std::string modelFilePath = "/home/mikhail/university/SlowChessEngine/nn/evaluate_position";
+    NeuralNetworkEvaluator evaluator(modelFilePath);
 
     while (true)
     {
@@ -25,8 +28,8 @@ void play(Position & pos)
         }
         else
         {
-            DefaultSearcher searcher;
-            const auto & [bestMove, eval] = searcher.iterativeDeepeningSearch(pos, 8);
+            DefaultSearcher searcher(&evaluator);
+            const auto & [bestMove, eval] = searcher.iterativeDeepeningSearch(pos, 2);
             std::cout << "Time taken: " << searcher.timeTaken / 1000000.0 << std::endl;
             std::cout << "Nodes reached: " << searcher.nodesReached << std::endl;
             std::cout << "Nodes evaluated: " << searcher.nodesEvaluated << std::endl;

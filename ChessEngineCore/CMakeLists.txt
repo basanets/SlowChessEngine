@@ -33,7 +33,11 @@ add_library(ChessEngineCore
     Search/DefaultSearcher.cpp
     Search/DefaultSearcher.h
     Search/TranspositionTable.cpp
-    Search/TranspositionTable.h)
+    Search/TranspositionTable.h
+    Evaluation/NeuralNetworkEvaluator.cpp
+    Evaluation/NeuralNetworkEvaluator.h)
 
+find_library(TENSORFLOW_LIB tensorflow HINT $ENV{HOME}/libtensorflow2/lib)
+target_link_libraries (ChessEngineCore "${TENSORFLOW_LIB}")
 target_compile_definitions(ChessEngineCore PRIVATE CHESSENGINECORE_LIBRARY)
 

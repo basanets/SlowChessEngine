@@ -3,10 +3,12 @@
 
 class Position;
 class Move;
+class NeuralNetworkEvaluator;
 #include <vector>
 #include <inttypes.h>
 #include <tuple>
 
+#include <BoardRepresentation/Color.h>
 #include <MoveGeneration/MoveList.h>
 
 class DefaultSearcher
@@ -18,12 +20,17 @@ public:
     uint32_t nodesCutOff;
 
 public:
+    explicit DefaultSearcher(NeuralNetworkEvaluator * nnEvaluator = nullptr);
+
+public:
     std::tuple<Move, int32_t> iterativeDeepeningSearch(const Position & position, uint32_t maxDepth);
     std::tuple<Move, int32_t> findBestMove(const Position & position, uint32_t depth);
     int32_t search(Position & position, uint32_t depth, uint32_t plyFromRoot, int32_t alpha, int32_t beta);
     int32_t quiescenceSearch(Position & position, uint32_t plyFromRoot, int32_t alpha, int32_t beta);
+    int32_t evaluatePosition(const Position & position);
 
 private:
+    NeuralNetworkEvaluator * nnEvaluator;
     Move knownBestMove = Move(NULL_SQUARE, NULL_SQUARE);
     void orderMoves(MoveList & moveList, const Position & pos, Move bestMove = Move(NULL_SQUARE, NULL_SQUARE));
 };

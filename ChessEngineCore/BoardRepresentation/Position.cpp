@@ -26,6 +26,60 @@ Position::Position(const Position & pos)
     sideToPlay = pos.sideToPlay;
 }
 
+std::vector<float> Position::binaryFeatures() const
+{
+    std::vector<float> features(789, 0.0f);
+
+    for (Square sq = A1; sq < NUMBER_OF_SQUARES; ++sq)
+    {
+        if (mailbox[sq] != NULL_PIECE)
+        {
+            const size_t featureIndex = sq * 12 + (typeOf(mailbox[sq]) - 1)
+                                        + (colorOf(mailbox[sq]) == BLACK ? 6 : 0);
+            features[featureIndex] = 1.0f;
+        }
+    }
+
+    if (history[gamePly].enPassantSquare != NULL_SQUARE)
+    {
+        const size_t featureIndex = 64 * 12
+                                    + fileOf(history[gamePly].enPassantSquare)
+                                    + (rankOf(history[gamePly].enPassantSquare) != 2 ? 8 : 0);
+        features[featureIndex] = 1.0f;
+    }
+
+    const Bitboard movedPieces = history[gamePly].movedPieces;
+    if (!(movedPieces & Bitboard::kingCastlingMask(WHITE)))
+    {
+        constexpr size_t featureIndex = 64 * 12 + 16 + 0;
+        features[featureIndex] = 1.0f;
+    }
+    if (!(movedPieces & Bitboard::queenCastlingMask(WHITE)))
+    {
+        constexpr size_t featureIndex = 64 * 12 + 16 + 1;
+        features[featureIndex] = 1.0f;
+    }
+
+    if (!(movedPieces & Bitboard::kingCastlingMask(BLACK)))
+    {
+        constexpr size_t featureIndex = 64 * 12 + 16 + 2;
+        features[featureIndex] = 1.0f;
+    }
+    if (!(movedPieces & Bitboard::queenCastlingMask(BLACK)))
+    {
+        constexpr size_t featureIndex = 64 * 12 + 16 + 3;
+        features[featureIndex] = 1.0f;
+    }
+
+    if (sideToPlay == BLACK)
+    {
+        constexpr size_t featureIndex = 64 * 12 + 16 + 4;
+        features[featureIndex] = 1.0f;
+    }
+
+    return features;
+}
+
 void Position::clear()
 {
     std::fill(mailbox, mailbox + NUMBER_OF_SQUARES, NULL_PIECE);

@@ -7,6 +7,7 @@
 
 
 #include <string>
+#include <vector>
 #include "Bitboard.h"
 #include "Piece.h"
 #include "Square.h"
@@ -74,6 +75,7 @@ public:
     ~Position() = default;
 
 public:
+    std::vector<float> binaryFeatures() const;
     void clear();
     Status status() const;
     void set(const std::string & fen);
