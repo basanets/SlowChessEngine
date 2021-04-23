@@ -20,7 +20,7 @@ Position::Position(const Position & pos)
     std::copy(pos.mailbox, pos.mailbox + NUMBER_OF_SQUARES, mailbox);
     std::copy(pos.pieceBB, pos.pieceBB + NUMBER_OF_PIECES, pieceBB);
     std::copy(pos.colorBB, pos.colorBB + NUMBER_OF_PIECES, colorBB);
-    std::copy(pos.history, pos.history + 256, history);
+    std::copy(pos.history, pos.history + 512, history);
     hash = pos.hash;
     gamePly = pos.gamePly;
     sideToPlay = pos.sideToPlay;
