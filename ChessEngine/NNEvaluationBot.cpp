@@ -8,8 +8,8 @@
 #include <BoardRepresentation/Position.h>
 #include <Search/DefaultSearcher.h>
 
-NNEvaluationBot::NNEvaluationBot(const std::string & pathToModel, uint32_t maxSearchDepth)
-    : neuralEvaluator(new NeuralNetworkEvaluator(pathToModel))
+NNEvaluationBot::NNEvaluationBot(NeuralNetworkEvaluator * nnEvaluator, uint32_t maxSearchDepth)
+    : neuralEvaluator(nnEvaluator)
     , maxSearchDepth(maxSearchDepth)
 {
 
@@ -22,7 +22,7 @@ Move NNEvaluationBot::makeMove(Position & position)
         throw std::runtime_error("Cannot make the move - the game is finished");
     }
 
-    DefaultSearcher moveSearcher(neuralEvaluator.get());
+    DefaultSearcher moveSearcher(neuralEvaluator);
     const auto & [move, evaluation] = moveSearcher.iterativeDeepeningSearch(position, maxSearchDepth);
     std::cout << "[NNEvaluationBot]: Best move found: " << move.toString() << " with evaluation: " << evaluation << std::endl;
     position.makeMove(move);

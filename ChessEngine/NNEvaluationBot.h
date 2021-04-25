@@ -12,14 +12,14 @@
 class NNEvaluationBot : public Player
 {
 public:
-    NNEvaluationBot(const std::string & pathToModel, uint32_t maxSearchDepth = 3);
+    NNEvaluationBot(NeuralNetworkEvaluator * nnEvaluator, uint32_t maxSearchDepth = 3);
     ~NNEvaluationBot() override = default;
 
 public:
     Move makeMove(Position & position) override;
 
 private:
-    std::unique_ptr<NeuralNetworkEvaluator> neuralEvaluator;
+    NeuralNetworkEvaluator * neuralEvaluator;
     uint32_t maxSearchDepth;
 };
 

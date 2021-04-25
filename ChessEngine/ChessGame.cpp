@@ -7,8 +7,7 @@ ChessGame::ChessGame(Player * white, Player * black)
     : whitePlayer(white)
     , blackPlayer(black)
 {
-    Zobrist::initializeTable();
-    BB::initializeAll();
+
 }
 
 void ChessGame::play(const std::string & fen)

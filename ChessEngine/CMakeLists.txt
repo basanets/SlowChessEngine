@@ -6,15 +6,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(ChessEngine
                main.cpp
-               Player.h
-               StaticEvaluationBot.cpp
-               StaticEvaluationBot.h
-               HumanPlayer.cpp
-               HumanPlayer.h
-               NNEvaluationBot.cpp
-               NNEvaluationBot.h
-               ChessGame.cpp
-               ChessGame.h)
+               ChessEngine.cpp
+               ChessEngine.h)
 
 target_link_libraries(ChessEngine PRIVATE ChessEngineCore)
 target_include_directories(ChessEngine PRIVATE
