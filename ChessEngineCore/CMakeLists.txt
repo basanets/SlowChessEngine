@@ -5,7 +5,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-option(USE_NN_EVALUATION "Compile the neural network evaluation functionality" OFF)
+option(USE_NN_EVALUATION "Compile the neural network evaluation functionality" ON)
 configure_file(CoreConfig.h.in CoreConfig.h)
 
 add_library(ChessEngineCore

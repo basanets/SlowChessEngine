@@ -1,1 +1,6 @@
 evaluate_position/
+evaluate_position_simplified/
+*.tfrecord
+.ipynb*
+chessData.csv
+
