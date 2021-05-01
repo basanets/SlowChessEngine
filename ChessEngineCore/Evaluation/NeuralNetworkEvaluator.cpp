@@ -11,7 +11,7 @@ NeuralNetworkEvaluator::NeuralNetworkEvaluator(const std::string & modelFilePath
 int32_t NeuralNetworkEvaluator::evaluate(const Position & position)
 {
     const static std::vector<int64_t> shape = {1, 1, 768};
-    float normalizeFactor = 10000.0;
+    float normalizeFactor = 1000.0;
 
     cppflow::tensor input = cppflow::tensor(position.binaryFeatures(), shape);
     cppflow::tensor output = m_model->operator()(input);

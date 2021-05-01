@@ -34,7 +34,8 @@ std::vector<float> Position::binaryFeatures() const
     {
         if (mailbox[sq] != NULL_PIECE)
         {
-            const size_t featureIndex = sq * 12 + (typeOf(mailbox[sq]) - 1)
+            Square relSquare = ((sideToPlay == WHITE) ? sq : mirrored(sq));
+            const size_t featureIndex = relSquare * 12 + (typeOf(mailbox[sq]) - 1)
                                         + (colorOf(mailbox[sq]) != sideToPlay ? 6 : 0);
             features[featureIndex] = 1.0f;
         }
