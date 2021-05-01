@@ -5,6 +5,7 @@
 #include <Evaluation/NeuralNetworkEvaluator.h>
 #include <Search/DefaultSearcher.h>
 #include <Search/PerfomanceTester.h>
+#include <Search/PrincipalVariationSearcher.h>
 #include <chrono>
 
 ChessEngine::ChessEngine(const std::string & pathToModel)
@@ -70,16 +71,20 @@ void ChessEngine::executeCommand(const std::string & command)
     else if (command.starts_with("findnn"))
     {
         uint32_t depth = std::stoi(command.substr(command.find(' ')));
-        DefaultSearcher searcher(nnEvaluator.get());
+        PrincipalVariationSearcher searcher(nnEvaluator.get());
         const auto [move, eval] = searcher.iterativeDeepeningSearch(chessPosition, depth);
-        std::cout << "Best move: " << move.toString() << ". Evaluation: " << eval << std::endl;
+        std::cout << "Best move: " << move.toString() << std::endl;
+        std::cout << "Evaluation: " << eval << std::endl;
+        std::cout << "Max depth with quiet search: " << searcher.getMaxDepth() << std::endl;
     }
     else if (command.starts_with("find"))
     {
         uint32_t depth = std::stoi(command.substr(command.find(' ')));
-        DefaultSearcher searcher(nullptr);
+        PrincipalVariationSearcher searcher(nullptr);
         const auto [move, eval] = searcher.iterativeDeepeningSearch(chessPosition, depth);
-        std::cout << "Best move: " << move.toString() << ". Evaluation: " << eval << std::endl;
+        std::cout << "Best move: " << move.toString() << std::endl;
+        std::cout << "Evaluation: " << eval << std::endl;
+        std::cout << "Max depth with quiet search: " << searcher.getMaxDepth() << std::endl;
     }
     else
     {

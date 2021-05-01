@@ -35,6 +35,8 @@ add_library(ChessEngineCore
     Evaluation/SimpleEvaluator.h
     Search/DefaultSearcher.cpp
     Search/DefaultSearcher.h
+    Search/PrincipalVariationSearcher.cpp
+    Search/PrincipalVariationSearcher.h
     Search/TranspositionTable.cpp
     Search/TranspositionTable.h
     Evaluation/NeuralNetworkEvaluator.cpp
