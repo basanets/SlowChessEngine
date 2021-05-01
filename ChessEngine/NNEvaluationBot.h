@@ -1,7 +1,3 @@
-#include "EngineConfig.h"
-
-#ifdef USE_NN_EVALUATION
-
 #ifndef NNEVALUATIONBOT_H
 #define NNEVALUATIONBOT_H
 
@@ -24,5 +20,3 @@ private:
 };
 
 #endif // NNEVALUATIONBOT_H
-
-#endif // USE_NN_EVALUATION

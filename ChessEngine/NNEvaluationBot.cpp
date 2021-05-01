@@ -1,12 +1,9 @@
-#include "EngineConfig.h"
-
-#ifdef USE_NN_EVALUATION
-
 #include "NNEvaluationBot.h"
 
 #include <iostream>
 #include <BoardRepresentation/Position.h>
 #include <Search/DefaultSearcher.h>
+#include <Search/PrincipalVariationSearcher.h>
 
 NNEvaluationBot::NNEvaluationBot(NeuralNetworkEvaluator * nnEvaluator, uint32_t maxSearchDepth)
     : neuralEvaluator(nnEvaluator)
@@ -22,11 +19,9 @@ Move NNEvaluationBot::makeMove(Position & position)
         throw std::runtime_error("Cannot make the move - the game is finished");
     }
 
-    DefaultSearcher moveSearcher(neuralEvaluator);
+    PrincipalVariationSearcher moveSearcher(neuralEvaluator);
     const auto & [move, evaluation] = moveSearcher.iterativeDeepeningSearch(position, maxSearchDepth);
-    std::cout << "[NNEvaluationBot]: Best move found: " << move.toString() << " with evaluation: " << evaluation << std::endl;
+//    std::cout << "[NNEvaluationBot]: Best move found: " << move.toString() << " with evaluation: " << evaluation << std::endl;
     position.makeMove(move);
     return move;
 }
-
-#endif // USE_NN_EVALUATION

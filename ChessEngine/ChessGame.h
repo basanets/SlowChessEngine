@@ -12,8 +12,10 @@ public:
 
 public:
     void play(const std::string & fen = FenUtility::DEFAULT_FEN);
+    int result() const;
 
 private:
+    int m_result;
     Player * whitePlayer;
     Player * blackPlayer;
 };

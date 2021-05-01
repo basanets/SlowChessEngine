@@ -6,6 +6,7 @@
 ChessGame::ChessGame(Player * white, Player * black)
     : whitePlayer(white)
     , blackPlayer(black)
+    , m_result(0)
 {
 
 }
@@ -16,7 +17,7 @@ void ChessGame::play(const std::string & fen)
 
     while (pos.status() == Position::NOT_FINISHED)
     {
-        std::cout << pos << std::endl;
+//        std::cout << pos << std::endl;
         if (pos.sideToPlay == WHITE)
         {
             whitePlayer->makeMove(pos);
@@ -27,28 +28,38 @@ void ChessGame::play(const std::string & fen)
         }
     }
 
-    std::cout << pos << std::endl;
+//    std::cout << pos << std::endl;
 
     switch (pos.status())
     {
     case Position::DRAW:
-        std::cout << "Game finished with draw" << std::endl;
+        m_result = 0;
+//        std::cout << "Game finished with draw" << std::endl;
         break;
 
     case Position::STALEMATE:
-        std::cout << "Game finished with stalemate" << std::endl;
+        m_result = 0;
+//        std::cout << "Game finished with stalemate" << std::endl;
         break;
 
     case Position::WHITE_WIN:
-        std::cout << "White won the game" << std::endl;
+        m_result = 1;
+//        std::cout << "White won the game" << std::endl;
         break;
 
     case Position::BLACK_WIN:
-        std::cout << "Black won the game" << std::endl;
+        m_result = -1;
+//        std::cout << "Black won the game" << std::endl;
         break;
 
     case Position::NOT_FINISHED:
-        std::cout << "Game wasn't finished" << std::endl;
+        throw std::runtime_error("AAAA");
+//        std::cout << "Game wasn't finished" << std::endl;
         break;
     }
+}
+
+int ChessGame::result() const
+{
+    return m_result;
 }
