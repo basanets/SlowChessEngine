@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.19)
 
-project(SlowChessEngine LANGUAGES CXX)
+project(SimpleChessEngine LANGUAGES CXX)
 
 add_subdirectory(ChessEngine)
 add_subdirectory(ChessEngineTest)
